@@ -1,17 +1,22 @@
-import { useSearchParams } from "react-router-dom";
 import { Note } from "../types/types";
-import { createNote } from "../services/notes.facade";
+import { createNote } from "../services/notes.service";
 
 interface SidenavProps {
   notes: Record<string, Note>;
+  select: (id: string) => void;
+  selectedId: string;
 }
 
-export default function Sidenav({ notes }: SidenavProps) {
+export default function Sidenav({ select, notes, selectedId }: SidenavProps) {
   return (
     <div className="w-[320px] p-2">
       {Object.values(notes).map((x) => (
-        <div className="mb-2">
-          <NoteCard note={x}></NoteCard>
+        <div key={x.id} className="mb-2">
+          <NoteCard
+            isSelected={x.id === selectedId}
+            select={select}
+            note={x}
+          ></NoteCard>
         </div>
       ))}
       <CreateNoteBtn></CreateNoteBtn>
@@ -19,17 +24,18 @@ export default function Sidenav({ notes }: SidenavProps) {
   );
 }
 
-function NoteCard({ note }: { note: Note }) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const handleNoteSelect = (id: string) => {
-    setSearchParams({ selected: id });
-  };
+interface NoteCard {
+  note: Note;
+  select: (id: string) => void;
+  isSelected: boolean;
+}
 
+function NoteCard({ note, select, isSelected }: NoteCard) {
   return (
     <button
-      onClick={() => handleNoteSelect(note.id)}
+      onClick={() => select(note.id)}
       className={`btn btn-primary w-full ${
-        searchParams.get("selected") === note.id ? "btn-accent" : "btn-primary"
+        isSelected ? "btn-accent" : "btn-primary"
       }`}
     >
       {note.title}

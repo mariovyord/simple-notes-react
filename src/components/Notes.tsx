@@ -1,11 +1,12 @@
-import { updateNote } from "../services/notes.facade";
+import { getAllNotes, updateNote } from "../services/notes.service";
 import { Note } from "../types/types";
 import Content from "./Content";
 import Sidenav from "./Sidenav";
-import { useReducer } from "react";
+import { useReducer, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 type ActionType =
-  | { type: "GET_NOTES" }
+  | { type: "GET_NOTES"; payload: Record<string, Note> }
   | { type: "CREATE_NOTE"; payload: Note }
   | { type: "UPDATE_NOTE"; payload: Note }
   | { type: "DELETE_NOTE"; payload: string };
@@ -17,7 +18,7 @@ interface State {
 const reducer = (state: State, action: ActionType) => {
   switch (action.type) {
     case "GET_NOTES":
-      return state;
+      return { ...state, notes: action.payload };
     case "CREATE_NOTE": {
       const created = { ...state.notes };
       created[action.payload.id] = action.payload;
@@ -45,18 +46,50 @@ const initialState: State = {
 
 export default function Notes() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const onNoteUpdate = (id: string, content: string) => {
-    const updated = structuredClone(state.notes[id]);
-    updated.content = content;
-    const newNote = updateNote(updated);
-    dispatch({ type: "UPDATE_NOTE", payload: newNote });
+  useEffect(() => {
+    const notes = getAllNotes();
+    dispatch({ type: "GET_NOTES", payload: notes || {} });
+  }, []);
+
+  const onNoteUpdate = useCallback(
+    (id: string, content: string) => {
+      const updated = structuredClone(state.notes[id]);
+      updated.content = content;
+      const newNote = updateNote(updated);
+      dispatch({ type: "UPDATE_NOTE", payload: newNote });
+    },
+    [state.notes]
+  );
+
+  if (Object.entries(state.notes).length === 0) return "Loading...";
+
+  let selectedId = searchParams.get("selected");
+  if (!selectedId) {
+    selectedId = Object.keys(state.notes)[0];
+    if (selectedId) setSearchParams({ selected: selectedId });
+  }
+
+  const selected = state.notes[selectedId];
+
+  const select = (id: string) => {
+    setSearchParams({ selected: id });
   };
 
   return (
     <div className="h-screen overflow-hidden flex">
-      <Sidenav notes={state.notes}></Sidenav>
-      <Content content={selected.content} onNoteUpdate={onNoteUpdate}></Content>
+      <Sidenav
+        selectedId={selectedId}
+        select={select}
+        notes={state.notes}
+      ></Sidenav>
+      <Content
+        key={selected.id}
+        id={selected.id}
+        initialValue={selected.content}
+        onNoteUpdate={onNoteUpdate}
+      ></Content>
     </div>
   );
 }

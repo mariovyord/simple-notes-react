@@ -8,6 +8,13 @@ const mockDB: Record<string, Note> = {
     updatedAt: new Date(),
     createdAt: new Date(),
   },
+  s4sd: {
+    id: "s4sd",
+    title: "Hello World 2",
+    content: "Hello World 2",
+    updatedAt: new Date(),
+    createdAt: new Date(),
+  },
 };
 
 function get(id: string | null): Record<string, Note> | Note | undefined {
