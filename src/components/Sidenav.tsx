@@ -1,34 +1,15 @@
 import { useSearchParams } from "react-router-dom";
 import { Note } from "../types/types";
+import { createNote } from "../services/notes.facade";
 
-const mockNotes: Note[] = [
-  {
-    id: "asd2312",
-    title: "Hello World",
-    content: "Hello World. Lorem ipsum",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "avas2312",
-    title: "100$",
-    content: "100$. Dollar ammunts",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-  {
-    id: "asd2ba2",
-    title: "Should buy milk",
-    content: "Should buy milk. Lorem ipsum vrum dasum gaks.",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  },
-];
+interface SidenavProps {
+  notes: Record<string, Note>;
+}
 
-export default function Sidenav() {
+export default function Sidenav({ notes }: SidenavProps) {
   return (
     <div className="w-[320px] p-2">
-      {mockNotes.map((x) => (
+      {Object.values(notes).map((x) => (
         <div className="mb-2">
           <NoteCard note={x}></NoteCard>
         </div>
@@ -40,7 +21,6 @@ export default function Sidenav() {
 
 function NoteCard({ note }: { note: Note }) {
   const [searchParams, setSearchParams] = useSearchParams();
-
   const handleNoteSelect = (id: string) => {
     setSearchParams({ selected: id });
   };
@@ -58,5 +38,11 @@ function NoteCard({ note }: { note: Note }) {
 }
 
 function CreateNoteBtn() {
-  return <button className="btn w-full">Create note</button>;
+  const onCreate = () => createNote();
+
+  return (
+    <button onClick={onCreate} className="btn w-full">
+      Create note
+    </button>
+  );
 }

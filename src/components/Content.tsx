@@ -1,4 +1,9 @@
-export default function Content() {
+interface ContentProps {
+  onNoteUpdate: (content: string) => void;
+  content: string;
+}
+
+export default function Content({ onNoteUpdate, content }: ContentProps) {
   return (
     <div className="w-full h-full">
       <textarea
