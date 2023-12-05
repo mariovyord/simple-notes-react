@@ -1,22 +1,19 @@
 import { ChangeEvent, useState } from "react";
+import { useNotesService } from "../contexts/NotesContext";
 
 interface ContentProps {
-  onNoteUpdate: (id: string, content: string) => void;
   id: string;
   initialValue: string;
 }
 
-export default function Content({
-  onNoteUpdate,
-  id,
-  initialValue,
-}: ContentProps) {
+export default function Content({ id, initialValue }: ContentProps) {
+  const notesService = useNotesService();
   const [text, setText] = useState(initialValue);
 
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setText(value);
-    onNoteUpdate(id, value);
+    notesService.update(id, value);
   };
 
   return (

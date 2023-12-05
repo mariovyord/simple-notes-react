@@ -1,5 +1,6 @@
 import Notes from "./components/Notes";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import NotesProvider from "./contexts/NotesProvider";
 
 const router = createBrowserRouter([
   {
@@ -11,7 +12,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+      <NotesProvider>
+        <RouterProvider router={router} />
+      </NotesProvider>
     </>
   );
 }

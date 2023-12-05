@@ -1,18 +1,15 @@
+import { useNotesService } from "../contexts/NotesContext";
 import { Note } from "../types/types";
 
 interface SidenavProps {
   notes: Record<string, Note>;
   select: (id: string) => void;
-  create: () => void;
   selectedId: string;
 }
 
-export default function Sidenav({
-  create,
-  select,
-  notes,
-  selectedId,
-}: SidenavProps) {
+export default function Sidenav({ select, notes, selectedId }: SidenavProps) {
+  const notesService = useNotesService();
+
   return (
     <div className="w-[320px] p-2">
       {Object.values(notes).map((x) => (
@@ -24,7 +21,7 @@ export default function Sidenav({
           ></NoteCard>
         </div>
       ))}
-      <button onClick={create} className="btn w-full">
+      <button onClick={notesService.create} className="btn w-full">
         Create note
       </button>
     </div>
