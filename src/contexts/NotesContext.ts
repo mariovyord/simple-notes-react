@@ -3,7 +3,7 @@ import { Note } from "../types/types";
 
 type NotesServiceContextProps = {
   create: () => Promise<Note>;
-  update: (id: string, content: string) => Promise<void>;
+  update: (id: string, title: string, content: string) => Promise<void>;
   remove: (id: string) => Promise<void>;
 } | null;
 

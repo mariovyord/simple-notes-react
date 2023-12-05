@@ -47,18 +47,16 @@ interface NoteCard {
 
 function NoteCard({ note, select, isSelected, remove }: NoteCard) {
   return (
-    <>
+    <div className="flex gap-1">
       <button
         onClick={() => select(note.id!)}
-        className={`btn btn-primary w-full ${
+        className={`btn btn-primary flex-1 ${
           isSelected ? "btn-accent" : "btn-primary"
         }`}
       >
         {note.title}
       </button>
-      <button className="btn" onClick={() => remove(note.id)}>
-        X
-      </button>
-    </>
+      {isSelected && <button onClick={() => remove(note.id)}>&#128219;</button>}
+    </div>
   );
 }

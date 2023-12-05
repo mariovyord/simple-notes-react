@@ -55,9 +55,10 @@ export default function NotesProvider({ children }: { children: ReactNode }) {
     fetchNotes();
   }, []);
 
-  const update = async (id: string, content: string) => {
+  const update = async (id: string, title: string, content: string) => {
     const updated = structuredClone(state.notes[id]);
     updated.content = content;
+    updated.title = title;
     const newNote = await notesApiService.updateNote(updated);
     dispatch({ type: "UPDATE_NOTE", payload: newNote });
   };
