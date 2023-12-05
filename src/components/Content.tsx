@@ -1,5 +1,6 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import { useNotesService } from "../contexts/NotesContext";
+import debounce from "lodash.debounce";
 
 interface ContentProps {
   id: string;
@@ -10,12 +11,21 @@ export default function Content({ id, initialValue }: ContentProps) {
   const notesService = useNotesService();
   const [text, setText] = useState(initialValue);
 
+  const updateNote = useMemo(
+    () =>
+      debounce((value: string) => {
+        const title = value.split("\n")[0].substring(0, 20);
+        notesService.update(id, title, value);
+        console.log("updated", value);
+      }, 300),
+    [id, notesService]
+  );
+
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
 
-    const title = value.split("\n")[0].substring(0, 20);
     setText(value);
-    notesService.update(id, title, value);
+    updateNote(value);
   };
 
   return (
