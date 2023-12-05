@@ -1,4 +1,4 @@
-import { getAllNotes, updateNote } from "../services/notes.service";
+import { createNote, getAllNotes, updateNote } from "../services/notes.service";
 import { Note } from "../types/types";
 import Content from "./Content";
 import Sidenav from "./Sidenav";
@@ -77,11 +77,17 @@ export default function Notes() {
     setSearchParams({ selected: id });
   };
 
+  const create = () => {
+    const n = createNote();
+    dispatch({ type: "CREATE_NOTE", payload: n });
+  };
+
   return (
     <div className="h-screen overflow-hidden flex">
       <Sidenav
         selectedId={selectedId}
         select={select}
+        create={create}
         notes={state.notes}
       ></Sidenav>
       <Content

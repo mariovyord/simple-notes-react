@@ -1,4 +1,3 @@
-import debounce from "lodash.debounce";
 import { ChangeEvent, useState } from "react";
 
 interface ContentProps {
@@ -14,18 +13,17 @@ export default function Content({
 }: ContentProps) {
   const [text, setText] = useState(initialValue);
 
-  const debouncedOnChange = debounce((e: ChangeEvent<HTMLTextAreaElement>) => {
-    console.log("hello");
+  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setText(value);
     onNoteUpdate(id, value);
-  }, 300);
+  };
 
   return (
     <div className="w-full h-full">
       <textarea
         value={text}
-        onChange={debouncedOnChange}
+        onChange={onChange}
         className="w-full h-full p-4"
         placeholder="Write your note"
       ></textarea>

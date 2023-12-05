@@ -1,13 +1,18 @@
 import { Note } from "../types/types";
-import { createNote } from "../services/notes.service";
 
 interface SidenavProps {
   notes: Record<string, Note>;
   select: (id: string) => void;
+  create: () => void;
   selectedId: string;
 }
 
-export default function Sidenav({ select, notes, selectedId }: SidenavProps) {
+export default function Sidenav({
+  create,
+  select,
+  notes,
+  selectedId,
+}: SidenavProps) {
   return (
     <div className="w-[320px] p-2">
       {Object.values(notes).map((x) => (
@@ -19,7 +24,9 @@ export default function Sidenav({ select, notes, selectedId }: SidenavProps) {
           ></NoteCard>
         </div>
       ))}
-      <CreateNoteBtn></CreateNoteBtn>
+      <button onClick={create} className="btn w-full">
+        Create note
+      </button>
     </div>
   );
 }
@@ -39,16 +46,6 @@ function NoteCard({ note, select, isSelected }: NoteCard) {
       }`}
     >
       {note.title}
-    </button>
-  );
-}
-
-function CreateNoteBtn() {
-  const onCreate = () => createNote();
-
-  return (
-    <button onClick={onCreate} className="btn w-full">
-      Create note
     </button>
   );
 }
