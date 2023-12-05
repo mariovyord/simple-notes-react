@@ -1,14 +1,14 @@
 import { useNotes, useNotesService } from "../contexts/NotesContext";
 import Content from "./Content";
 import Sidenav from "./Sidenav";
-import useSelectedId from "../hooks/useLocalStorage";
+import useSelectedId from "../hooks/useSelectedId";
 
 export default function Notes() {
   const notes = useNotes();
   const notesService = useNotesService();
   const [selectedId, setSelectedId] = useSelectedId();
 
-  if (!useSelectedId && Object.keys(notes).length > 0) {
+  if ((!selectedId || !notes?.[selectedId]) && Object.keys(notes).length > 0) {
     setSelectedId(Object.keys(notes)[0]);
   }
 
@@ -21,15 +21,31 @@ export default function Notes() {
     setSelectedId(note.id);
   };
 
+  const remove = async (id: string) => {
+    await notesService.remove(id);
+    if (selectedId === id) {
+      if (
+        (!selectedId || !notes?.[selectedId]) &&
+        Object.keys(notes).length > 0
+      ) {
+        setSelectedId(Object.keys(notes)[0]);
+        return;
+      }
+
+      setSelectedId();
+    }
+  };
+
   return (
     <div className="h-screen overflow-hidden flex">
       <Sidenav
         create={create}
+        remove={remove}
         selectedId={selectedId || ""}
         select={select}
         notes={notes}
       ></Sidenav>
-      {selectedId ? (
+      {Object.keys(notes).length && selectedId ? (
         <Content
           key={selectedId}
           id={selectedId}

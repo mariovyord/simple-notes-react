@@ -15,7 +15,7 @@ export default function useSelectedId() {
 
   const setItem = (selectedId: string) => {
     try {
-      if (selectedId === null) {
+      if (!selectedId) {
         localStorage.removeItem("selectedId");
         setState(null);
       } else {

@@ -1,14 +1,20 @@
-import { useNotes, useNotesService } from "../contexts/NotesContext";
+import { useNotes } from "../contexts/NotesContext";
 import { Note } from "../types/types";
 
 interface SidenavProps {
   notes: Record<string, Note>;
   select: (id: string) => void;
+  remove: (id: string) => void;
   create: () => void;
   selectedId: string;
 }
 
-export default function Sidenav({ create, select, selectedId }: SidenavProps) {
+export default function Sidenav({
+  create,
+  select,
+  selectedId,
+  remove,
+}: SidenavProps) {
   const notes = useNotes();
 
   return (
@@ -18,6 +24,7 @@ export default function Sidenav({ create, select, selectedId }: SidenavProps) {
           <NoteCard
             isSelected={x.id === selectedId}
             select={select}
+            remove={remove}
             note={x}
           ></NoteCard>
         </div>
@@ -34,12 +41,11 @@ export default function Sidenav({ create, select, selectedId }: SidenavProps) {
 interface NoteCard {
   note: Note;
   select: (id: string) => void;
+  remove: (id: string) => void;
   isSelected: boolean;
 }
 
-function NoteCard({ note, select, isSelected }: NoteCard) {
-  const notesService = useNotesService();
-
+function NoteCard({ note, select, isSelected, remove }: NoteCard) {
   return (
     <>
       <button
@@ -50,7 +56,7 @@ function NoteCard({ note, select, isSelected }: NoteCard) {
       >
         {note.title}
       </button>
-      <button className="btn" onClick={() => notesService.remove(note.id)}>
+      <button className="btn" onClick={() => remove(note.id)}>
         X
       </button>
     </>

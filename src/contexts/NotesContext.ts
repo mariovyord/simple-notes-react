@@ -3,8 +3,8 @@ import { Note } from "../types/types";
 
 type NotesServiceContextProps = {
   create: () => Promise<Note>;
-  update: (id: string, content: string) => void;
-  remove: (id: string) => void;
+  update: (id: string, content: string) => Promise<void>;
+  remove: (id: string) => Promise<void>;
 } | null;
 
 export const NotesContext = createContext<Record<string, Note>>({});
