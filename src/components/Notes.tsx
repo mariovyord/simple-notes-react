@@ -1,36 +1,43 @@
-import { useNotes } from "../contexts/NotesContext";
+import { useNotes, useNotesService } from "../contexts/NotesContext";
 import Content from "./Content";
 import Sidenav from "./Sidenav";
-import { useSearchParams } from "react-router-dom";
+import useSelectedId from "../hooks/useLocalStorage";
 
 export default function Notes() {
   const notes = useNotes();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const notesService = useNotesService();
+  const [selectedId, setSelectedId] = useSelectedId();
 
-  let selectedId = searchParams.get("selected");
-  if (!selectedId) {
-    selectedId = Object.keys(notes)[0];
-    if (selectedId) setSearchParams({ selected: selectedId });
+  if (!useSelectedId && Object.keys(notes).length > 0) {
+    setSelectedId(Object.keys(notes)[0]);
   }
-
-  const selected = notes[selectedId];
 
   const select = (id: string) => {
-    setSearchParams({ selected: id });
+    setSelectedId(id);
   };
 
-  if (Object.keys(notes).length === 0) {
-    return "Empty";
-  }
+  const create = async () => {
+    const note = await notesService.create();
+    setSelectedId(note.id);
+  };
 
   return (
     <div className="h-screen overflow-hidden flex">
-      <Sidenav selectedId={selectedId} select={select} notes={notes}></Sidenav>
-      <Content
-        key={selected.id}
-        id={selected.id}
-        initialValue={selected.content}
-      ></Content>
+      <Sidenav
+        create={create}
+        selectedId={selectedId || ""}
+        select={select}
+        notes={notes}
+      ></Sidenav>
+      {selectedId ? (
+        <Content
+          key={selectedId}
+          id={selectedId}
+          initialValue={notes[selectedId].content}
+        ></Content>
+      ) : (
+        <div className="w-full h-full">"Create new note"</div>
+      )}
     </div>
   );
 }

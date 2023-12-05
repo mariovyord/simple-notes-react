@@ -2,8 +2,9 @@ import { createContext, useContext } from "react";
 import { Note } from "../types/types";
 
 type NotesServiceContextProps = {
-  create: () => void;
+  create: () => Promise<Note>;
   update: (id: string, content: string) => void;
+  remove: (id: string) => void;
 } | null;
 
 export const NotesContext = createContext<Record<string, Note>>({});

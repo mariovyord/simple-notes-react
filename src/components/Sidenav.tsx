@@ -1,14 +1,15 @@
-import { useNotesService } from "../contexts/NotesContext";
+import { useNotes, useNotesService } from "../contexts/NotesContext";
 import { Note } from "../types/types";
 
 interface SidenavProps {
   notes: Record<string, Note>;
   select: (id: string) => void;
+  create: () => void;
   selectedId: string;
 }
 
-export default function Sidenav({ select, notes, selectedId }: SidenavProps) {
-  const notesService = useNotesService();
+export default function Sidenav({ create, select, selectedId }: SidenavProps) {
+  const notes = useNotes();
 
   return (
     <div className="w-[320px] p-2">
@@ -21,9 +22,11 @@ export default function Sidenav({ select, notes, selectedId }: SidenavProps) {
           ></NoteCard>
         </div>
       ))}
-      <button onClick={notesService.create} className="btn w-full">
-        Create note
-      </button>
+      {Object.keys(notes).length <= 10 && (
+        <button onClick={create} className="btn w-full">
+          Create note
+        </button>
+      )}
     </div>
   );
 }
@@ -35,14 +38,21 @@ interface NoteCard {
 }
 
 function NoteCard({ note, select, isSelected }: NoteCard) {
+  const notesService = useNotesService();
+
   return (
-    <button
-      onClick={() => select(note.id)}
-      className={`btn btn-primary w-full ${
-        isSelected ? "btn-accent" : "btn-primary"
-      }`}
-    >
-      {note.title}
-    </button>
+    <>
+      <button
+        onClick={() => select(note.id!)}
+        className={`btn btn-primary w-full ${
+          isSelected ? "btn-accent" : "btn-primary"
+        }`}
+      >
+        {note.title}
+      </button>
+      <button className="btn" onClick={() => notesService.remove(note.id)}>
+        X
+      </button>
+    </>
   );
 }
