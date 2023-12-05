@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNotes } from "../contexts/NotesContext";
 import { Note } from "../types/types";
 
@@ -30,7 +31,7 @@ export default function Sidenav({
         </div>
       ))}
       {Object.keys(notes).length <= 10 && (
-        <button onClick={create} className="btn w-full">
+        <button onClick={create} className="btn w-full justify-start">
           Create note
         </button>
       )}
@@ -46,17 +47,30 @@ interface NoteCard {
 }
 
 function NoteCard({ note, select, isSelected, remove }: NoteCard) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="flex gap-1">
+    <div
+      className="flex gap-1"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <button
         onClick={() => select(note.id!)}
-        className={`btn btn-primary flex-1 ${
+        className={`btn btn-primary flex-1 justify-start ${
           isSelected ? "btn-accent" : "btn-primary"
         }`}
       >
         {note.title}
       </button>
-      {isSelected && <button onClick={() => remove(note.id)}>&#128219;</button>}
+      {isHovered && (
+        <div
+          className="tooltip tooltip-open tooltip-right flex justify-center items-center"
+          data-tip="Delete"
+        >
+          <button onClick={() => remove(note.id)}>&#10006;</button>
+        </div>
+      )}
     </div>
   );
 }
